@@ -1,0 +1,54 @@
+# @package training
+
+seed: 42
+
+# cfmsr | skipgcn
+model_name: cfmsr
+
+epochs: 100
+lr: 1e-3
+weight_decay: 1e-4
+hidden_dim: 64
+num_layers: 2
+num_heads: 4
+ffn_mult: 4.0
+num_seeds: 4
+dropout: 0.2
+classifier_dropout: 0.3
+patience: 20
+grad_clip: 1.0
+model_out: hcp_gnn_best.pt
+predictions_out: test_predictions.csv
+
+drop_edge: 0.0
+node_noise_std: 0.0
+edge_noise_std: 0.0
+label_smoothing: 0.0
+use_node_embedding: true
+adamw_no_decay_bias_norm: false
+
+edge_batchnorm: true
+edge_readout: none
+edge_readout_dim: 16
+
+skipgcn:
+  hidden_channels: 32
+  dropout: 0.2
+  pooling_type: global_max_pool
+
+monitor_metric: null
+early_stop_min_delta: 0.0
+monitor_smoothing_window: 1
+lr_scheduler: plateau
+warmup_epochs: 0
+
+metrics:
+  - accuracy
+  - balanced_accuracy
+  - precision
+  - recall
+  - f1
+  - roc_auc
+
+metric_threshold: 0.5
+score_metric: roc_auc

@@ -1,0 +1,37 @@
+# @package _global_
+# Leak check: пермутация меток только на train/val; test — истинные.
+# Модель учится на случайных метках, поэтому ожидается test ROC-AUC ≈ 0.5
+# (небольшой разброс в обе стороны допустим). Устойчиво высокий AUC означал бы,
+# что истинные метки попадают в обучение мимо перемешивания (утечка в пайплайне).
+# Сигнал в рёбрах ensemble не помогает: без истинных train-меток модель не может
+# выучить, какое направление признаков соответствует какому состоянию.
+
+data:
+  shuffle_labels: true
+  shuffle_labels_scope: train
+  shuffle_labels_seed: 0
+  node_features: ones
+
+training:
+  model_name: skipgcn
+  monitor_metric: loss
+  score_metric: roc_auc
+  metrics:
+    - accuracy
+    - balanced_accuracy
+    - f1
+    - roc_auc
+
+cv:
+  enabled: true
+  evaluate_test: true
+  use_inner_folds: true
+  ensemble_seeds: 3
+  bootstrap_n: 0
+  objective_metric: roc_auc
+  objective: mean
+  objective_scope: fold
+
+mlflow:
+  enabled: true
+  log_artifacts: true

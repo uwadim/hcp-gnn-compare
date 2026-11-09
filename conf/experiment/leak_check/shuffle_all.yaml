@@ -1,0 +1,33 @@
+# @package _global_
+# Leak check: пермутация меток на train+val+test.
+# Ожидание: ROC-AUC на test ≈ 0.5 (нет бага в оценке / подстановки меток).
+
+data:
+  shuffle_labels: true
+  shuffle_labels_scope: all
+  shuffle_labels_seed: 0
+  node_features: ones
+
+training:
+  model_name: skipgcn
+  monitor_metric: loss
+  score_metric: roc_auc
+  metrics:
+    - accuracy
+    - balanced_accuracy
+    - f1
+    - roc_auc
+
+cv:
+  enabled: true
+  evaluate_test: true
+  use_inner_folds: true
+  ensemble_seeds: 3
+  bootstrap_n: 0
+  objective_metric: roc_auc
+  objective: mean
+  objective_scope: fold
+
+mlflow:
+  enabled: true
+  log_artifacts: true

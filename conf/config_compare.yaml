@@ -1,0 +1,40 @@
+# Stage 2: сравнение моделей на test outer 0 с bootstrap 95% CI.
+# Протокол обучения как в подтверждении: epochs из hpo_budget
+# (150 correlation / 100 ensemble), patience=15, early stopping по val loss.
+# HP SkipGCN: conf/best_task/skipgcn_{variant}_{task}.yaml (отбор confirm D).
+# Запуск:
+#   python main_compare.py variant=correlation task=EMOTION model=skipgcn
+#   python main_compare.py variant=ensemble_full task=WM model=cfmsr
+#   bash scripts/run_stage2_compare.sh
+
+defaults:
+  - data
+  - training
+  - cv: compare
+  - mlflow: default
+  - variant: correlation
+  - task: WM
+  - model: skipgcn
+  - experiment: stage2/compare_bootstrap
+  - hpo_budget: ${variant}
+  - optional best: ${model}_${variant}
+  - optional best_task: ${model}_${variant}_${task}
+  - _self_
+
+data:
+  # Подбор HP шёл на субъектах outer 0: test остальных outer пересекается с ним.
+  outer_fold: 0
+
+training:
+  patience: 15
+  monitor_smoothing_window: 3
+
+mlflow:
+  experiment_name: hcp_stage2_compare_${data.variant}_${data.task}_${training.model_name}
+  run_name: compare_${training.model_name}_${data.variant}_${data.task}
+  tracking_uri: sqlite:///artifacts/mlflow.db
+
+hydra:
+  run:
+    dir: artifacts/compare_runs/${data.variant}/${data.task}/${training.model_name}/${now:%Y-%m-%d_%H-%M-%S}
+  sweeper: null

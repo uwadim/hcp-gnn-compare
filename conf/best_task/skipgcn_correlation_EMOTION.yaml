@@ -1,0 +1,14 @@
+# @package _global_
+# Отобрано select_confirm_d: avg_best; cv_mean=0.9179±0.0054
+
+data:
+  drop_percentile: 50.0
+  batch_size: 16
+
+training:
+  lr: 0.00158
+  weight_decay: 3.7e-05
+  skipgcn:
+    hidden_channels: 32
+    dropout: 0.25
+    pooling_type: global_max_pool

@@ -1,0 +1,32 @@
+# Базовый запуск моделей с дефолтными гиперпараметрами
+# на всех variant × task (проверка сходимости).
+#
+# Один прогон:
+#   python main_smoke.py model=skipgcn variant=correlation task=EMOTION
+#   python main_smoke.py model=cfmsr variant=ensemble_full task=WM
+#
+# Матрица (resumable, по одному эксперименту):
+#   bash scripts/run_smoke_defaults.sh
+#   bash scripts/run_smoke_defaults.sh --list
+#   bash scripts/run_smoke_defaults.sh --dry-run
+
+defaults:
+  - data
+  - training
+  - cv: smoke
+  - mlflow: default
+  - variant: correlation
+  - task: WM
+  - model: skipgcn
+  - experiment: smoke_defaults
+  - _self_
+
+mlflow:
+  experiment_name: hcp_smoke_defaults_${data.variant}_${data.task}_${training.model_name}
+  run_name: smoke_${training.model_name}_${data.variant}_${data.task}
+  tracking_uri: sqlite:///artifacts/mlflow.db
+
+hydra:
+  run:
+    dir: artifacts/smoke_runs/${data.variant}/${data.task}/${training.model_name}/${now:%Y-%m-%d_%H-%M-%S}
+  sweeper: null

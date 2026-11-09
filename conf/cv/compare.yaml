@@ -1,0 +1,14 @@
+# @package cv
+# CV для stage2: полное обучение + оценка outer test.
+
+enabled: true
+ensemble_seeds: 3
+save_models: false
+oof_out: cv_oof_predictions.csv
+use_inner_folds: true
+evaluate_test: true
+
+objective: mean
+objective_metric: roc_auc
+objective_scope: fold
+std_penalty: 0.5

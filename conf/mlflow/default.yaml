@@ -1,0 +1,8 @@
+# @package mlflow
+
+enabled: true
+tracking_uri: sqlite:///artifacts/mlflow.db
+# Имя эксперимента и run содержат модель, вариант графа и задачу.
+experiment_name: hcp_${training.model_name}_${data.variant}_${data.task}
+run_name: ${training.model_name}_${data.variant}_${data.task}
+log_artifacts: true

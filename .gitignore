@@ -1,0 +1,51 @@
+# Graph archive and any local data copies (not shipped)
+data/
+*.npy
+*.npz
+*.pickle
+*.pkl
+
+# Experiment outputs (MLflow, Hydra runs, baseline caches)
+artifacts/
+mlruns/
+outputs/
+multirun/
+.hydra/
+
+# Model checkpoints
+*.pt
+*.pth
+*.ckpt
+
+# Databases / local tracking
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/
+.cursor/
+*.swp
+.DS_Store
+Thumbs.db

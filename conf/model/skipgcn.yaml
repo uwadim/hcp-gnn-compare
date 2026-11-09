@@ -1,0 +1,15 @@
+# @package training
+model_name: skipgcn
+lr: 3e-4
+weight_decay: 1e-4
+epochs: 100
+patience: 20
+monitor_metric: loss
+monitor_smoothing_window: 3
+score_metric: roc_auc
+skipgcn:
+  hidden_channels: 32
+  dropout: 0.2
+  pooling_type: global_max_pool
+model_out: skipgcn_compare_best.pt
+predictions_out: skipgcn_test_predictions.csv

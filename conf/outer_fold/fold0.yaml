@@ -1,0 +1,4 @@
+# @package _global_
+# Outer fold 0 архива (624 train / 208 test субъектов); inner fold 0–2 обучаются внутри.
+data:
+  outer_fold: 0

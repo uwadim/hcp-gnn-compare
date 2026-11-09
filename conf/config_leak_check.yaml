@@ -1,0 +1,52 @@
+# Проверка утечки для ensemble_univariate / ensemble_full.
+#
+# Две части (скрипт scripts/run_leak_check.sh):
+#   1) статический аудит построения ансамблей (без обучения);
+#   2) обучение SkipGCN на тех же ячейках, что дали AUC≈1.0, но с
+#      перемешанными метками (ожидание: ROC-AUC ≈ 0.5).
+#
+# Протокол обучения как stage 2 (outer 0, 3 inner × 3 seed, patience 15),
+# HP из conf/best_task/. Bootstrap на test отключён: нужен только точечный AUC.
+#
+# Запуск:
+#   bash scripts/run_leak_check.sh
+#   bash scripts/run_leak_check.sh --audit-only
+#   bash scripts/run_leak_check.sh --train-only
+#   python main_compare.py --config-name config_leak_check \
+#       variant=ensemble_univariate task=MOTOR
+
+defaults:
+  - data
+  - training
+  - cv: compare
+  - mlflow: default
+  - variant: ensemble_univariate
+  - task: MOTOR
+  - model: skipgcn
+  - experiment: leak_check/shuffle_all
+  - hpo_budget: ${variant}
+  - optional best: ${model}_${variant}
+  - optional best_task: ${model}_${variant}_${task}
+  - _self_
+
+data:
+  outer_fold: 0
+  # shuffle_labels* задаёт experiment/leak_check/{shuffle_all|shuffle_train}.yaml
+
+training:
+  patience: 15
+  monitor_smoothing_window: 3
+
+cv:
+  bootstrap_n: 0
+  ensemble_seeds: 3
+
+mlflow:
+  experiment_name: hcp_leak_${data.shuffle_labels_scope}_${data.variant}_${data.task}_${training.model_name}
+  run_name: leak_${data.shuffle_labels_scope}_${data.variant}_${data.task}_s${data.shuffle_labels_seed}
+  tracking_uri: sqlite:///artifacts/mlflow.db
+
+hydra:
+  run:
+    dir: artifacts/leak_check_runs/${data.shuffle_labels_scope}/${data.variant}/${data.task}/${now:%Y-%m-%d_%H-%M-%S}
+  sweeper: null

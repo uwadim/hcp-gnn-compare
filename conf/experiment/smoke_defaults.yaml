@@ -1,0 +1,71 @@
+# @package _global_
+# Базовый прогон с дефолтными HP: проверка сходимости на всех датасетах.
+#
+# Запуск одного:
+#   python main_smoke.py model=skipgcn variant=correlation task=WM
+# Все комбинации:
+#   python main_smoke.py -m
+#   bash scripts/run_smoke_defaults.sh
+
+training:
+  seed: 42
+  epochs: 100
+  patience: 20
+  # Early stopping по val loss — удобно смотреть сходимость.
+  monitor_metric: loss
+  monitor_smoothing_window: 1
+  early_stop_min_delta: 0.0
+  score_metric: roc_auc
+  lr_scheduler: plateau
+  grad_clip: 1.0
+  label_smoothing: 0.0
+  weight_decay: 1e-4
+  # CF-MSR defaults
+  lr: 1e-3
+  hidden_dim: 64
+  num_layers: 2
+  num_heads: 4
+  ffn_mult: 4.0
+  num_seeds: 4
+  dropout: 0.2
+  classifier_dropout: 0.3
+  use_node_embedding: true
+  edge_batchnorm: true
+  edge_readout: none
+  drop_edge: 0.0
+  node_noise_std: 0.0
+  edge_noise_std: 0.0
+  # SkipGCN defaults
+  skipgcn:
+    hidden_channels: 32
+    dropout: 0.2
+    pooling_type: global_max_pool
+  metrics:
+    - accuracy
+    - balanced_accuracy
+    - f1
+    - roc_auc
+  metric_threshold: 0.5
+  model_out: smoke_best.pt
+  predictions_out: smoke_test_predictions.csv
+
+data:
+  # Один outer fold для матрицы прогонов (сходимость, не финальная оценка).
+  outer_fold: 0
+  inner_val_fold: 0
+  drop_percentile: 50.0
+  batch_size: 8
+  edge_scaler: none
+
+cv:
+  enabled: true
+  use_inner_folds: false
+  evaluate_test: true
+  ensemble_seeds: 1
+  bootstrap_n: 0
+
+mlflow:
+  enabled: true
+  experiment_name: hcp_smoke_defaults_${data.variant}_${data.task}_${training.model_name}
+  run_name: smoke_${training.model_name}_${data.variant}_${data.task}
+  log_artifacts: true

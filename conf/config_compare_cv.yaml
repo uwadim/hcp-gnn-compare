@@ -1,0 +1,42 @@
+# Stage 2 на произвольном outer fold: тот же протокол, что config_compare.yaml,
+# но fold задаётся явно группой ``outer_fold=foldK`` и входит в имя MLflow experiment.
+# Outer 0 уже посчитан config_compare.yaml и здесь не повторяется.
+#
+# HP зафиксированы: conf/best_task/{model}_{variant}_{task}.yaml — лучшие HP SkipGCN, полученные
+# на outer 0, одинаковые для всех fold (27 ячеек — дефолтные HP, correlation/EMOTION — подобранные).
+#
+# Запуск одной ячейки (outer_fold = fold0 | fold1 | fold2 | fold3, обязателен):
+#   python main_compare.py --config-name config_compare_cv \
+#       variant=ensemble_full task=WM model=skipgcn outer_fold=fold2
+# Весь план: bash scripts/run_stage2_cv.sh
+
+defaults:
+  - data
+  - training
+  - cv: compare
+  - mlflow: default
+  - variant: correlation
+  - task: WM
+  - model: skipgcn
+  - experiment: stage2/compare_bootstrap
+  - hpo_budget: ${variant}
+  - optional best: ${model}_${variant}
+  - optional best_task: ${model}_${variant}_${task}
+  - outer_fold: ???
+  - _self_
+
+training:
+  patience: 15
+  monitor_smoothing_window: 3
+
+mlflow:
+  experiment_name: >-
+    hcp_stage2_cv_${data.variant}_${data.task}_${training.model_name}_outer${data.outer_fold}
+  run_name: compare_${training.model_name}_${data.variant}_${data.task}_outer${data.outer_fold}
+  tracking_uri: sqlite:///artifacts/mlflow.db
+
+hydra:
+  run:
+    dir: >-
+      artifacts/compare_runs_cv/outer${data.outer_fold}/${data.variant}/${data.task}/${training.model_name}/${now:%Y-%m-%d_%H-%M-%S}
+  sweeper: null

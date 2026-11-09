@@ -1,0 +1,37 @@
+# @package data
+
+# Graph archive is not in this repository. Point this at a local copy of
+# hcp_mmp_mean_ablation_graphs (dataset id hcp_rl_2026_10_14).
+# Path is relative to the Hydra original working directory (repo root).
+root: ../HPC_data_ref/hcp_mmp_mean_ablation_graphs
+
+# correlation | ensemble_correlation | ensemble_univariate | ensemble_full
+variant: correlation
+
+# Одна задача за запуск: WM | GAMBLING | MOTOR | LANGUAGE | SOCIAL | RELATIONAL | EMOTION
+task: WM
+
+# mean_std — региональные mean/std из correlation/vertices;
+# ones — константа 1 (дефолт для ensemble-GNN в исходном пайплайне).
+node_features: mean_std
+
+# Отбрасывать рёбра с |w| ниже этого перцентиля (0 = оставить все).
+drop_percentile: 0.0
+
+# none | global — нормировка весов рёбер по статистикам train.
+edge_scaler: none
+
+batch_size: 4
+num_workers: 0
+
+# null — полный outer CV (если cv.enabled); иначе один outer fold 0..3.
+outer_fold: null
+
+# Для single-split (cv.enabled=false): какой inner fold использовать как val.
+inner_val_fold: 0
+
+# Проверка утечки / null: пермутация меток (см. config_leak_check.yaml).
+# scope=all — pool+test; scope=train — только train pool, test истинные.
+shuffle_labels: false
+shuffle_labels_seed: 0
+shuffle_labels_scope: all

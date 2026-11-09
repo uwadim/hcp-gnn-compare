@@ -1,0 +1,3 @@
+# @package training
+# SkipGCN на correlation сходится медленно (медиана лучшей эпохи ~63).
+epochs: 150

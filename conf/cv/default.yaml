@@ -1,0 +1,21 @@
+# @package cv
+
+enabled: true
+# Число seed на каждый outer×inner fold.
+ensemble_seeds: 1
+save_models: false
+oof_out: cv_oof_predictions.csv
+# Использовать 3 inner folds внутри каждого outer для val/early stopping.
+use_inner_folds: true
+# Оценивать outer test после каждого inner обучения (ансамбль).
+evaluate_test: true
+
+# Objective для Optuna / возврата run_cv_training (maximize).
+objective: mean
+objective_metric: roc_auc
+objective_scope: fold
+std_penalty: 0.5
+
+# 0 = без bootstrap; >0 — 95% CI ROC-AUC на test/OOF.
+bootstrap_n: 0
+bootstrap_seed: 42

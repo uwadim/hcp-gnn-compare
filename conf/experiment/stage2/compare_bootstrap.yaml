@@ -1,0 +1,27 @@
+# @package _global_
+# Stage 2: CV + outer test + bootstrap 95% CI для ROC-AUC.
+
+cv:
+  enabled: true
+  evaluate_test: true
+  use_inner_folds: true
+  ensemble_seeds: 3
+  objective_metric: roc_auc
+  objective: mean
+  objective_scope: fold
+  # Bootstrap по образцам outer-test (и OOF).
+  bootstrap_n: 1000
+  bootstrap_seed: 42
+
+training:
+  monitor_metric: loss
+  score_metric: roc_auc
+  metrics:
+    - accuracy
+    - balanced_accuracy
+    - f1
+    - roc_auc
+
+mlflow:
+  enabled: true
+  log_artifacts: true

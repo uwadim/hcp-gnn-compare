@@ -1,0 +1,19 @@
+# @package cv
+# CV для проверки сходимости: один outer (через data.outer_fold),
+# один inner val, без bootstrap.
+
+enabled: true
+ensemble_seeds: 1
+save_models: false
+oof_out: smoke_oof_predictions.csv
+# Один inner fold как val (быстрее матрицы variant×task×model).
+use_inner_folds: false
+evaluate_test: true
+
+objective: mean
+objective_metric: roc_auc
+objective_scope: fold
+std_penalty: 0.5
+
+bootstrap_n: 0
+bootstrap_seed: 42
